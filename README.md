@@ -4,13 +4,9 @@ Windows-Anwendung zur GPIB-Steuerung der Frequenzzähler Racal-Dana 1991 und 199
 
 ## Bildschirmaufnahmen
 
-### Helle Ansicht
-
-![Racal-Dana 1991 Control in der hellen Ansicht](docs/screenshots/racaldana1991-hell.png)
-
-### Dunkle Ansicht
-
-![Racal-Dana 1991 Control in der dunklen Ansicht](docs/screenshots/racaldana1991-dunkel.png)
+| Hell | Dunkel |
+| --- | --- |
+| <a href="docs/screenshots/racaldana1991-hell.png"><img src="docs/screenshots/racaldana1991-hell.png" alt="Racal-Dana 1991 Control in der hellen Ansicht" width="400"></a> | <a href="docs/screenshots/racaldana1991-dunkel.png"><img src="docs/screenshots/racaldana1991-dunkel.png" alt="Racal-Dana 1991 Control in der dunklen Ansicht" width="400"></a> |
 
 ## Installation unter Windows
 
