@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/branding">
+        <file>logo_g.gif</file>
+    </qresource>
+    <qresource prefix="/">
+        <file alias="device-icon.ico">racaldana1991-icon-b.ico</file>
+    </qresource>
+</RCC>
