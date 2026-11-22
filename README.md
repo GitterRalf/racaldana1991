@@ -2,6 +2,8 @@
 
 Windows-Anwendung zur GPIB-Steuerung der Frequenzzähler Racal-Dana 1991 und 1992. Sie zeigt einzelne oder fortlaufende Messungen sowie den Frequenzverlauf an. Je nach Gerät und Eingangsoption stehen unter anderem Frequenz, Periode, Zeitintervall, Verhältnis und Ereigniszählung zur Verfügung.
 
+Entwickelt und gepflegt von Ralf Tralow mit Unterstützung von OpenAI Codex.
+
 ## Bildschirmaufnahmen
 
 | Hell | Dunkel |
