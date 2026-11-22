@@ -10,11 +10,24 @@
 #define IconResource FileOpen(SourcePath + "assets\app.rc")
 #define RacalDana1991Icon ReadQuoted(FileRead(IconResource))
 #expr FileClose(IconResource)
-#define RacalDana1991Name "Racal-Dana 1991 Control"
+#ifndef BuildArch
+  #define BuildArch "x64"
+#endif
+#if BuildArch == "x86"
+  #define RacalDana1991Name "Racal-Dana 1991 Control (32 Bit)"
+  #define DeviceAppId "{{7AB5875A-6F7D-54BA-92C2-A9BB7D6E7851}"
+  #define DeviceBuildDir "build-x86"
+#elif BuildArch == "x64"
+  #define RacalDana1991Name "Racal-Dana 1991 Control"
+  #define DeviceAppId "{{EE0EB66F-1FF9-4E15-9C1F-E6C5652F2A56}"
+  #define DeviceBuildDir "build"
+#else
+  #error BuildArch must be x86 or x64.
+#endif
 #define RacalDana1991Exe "RacalDana1991.exe"
 
 [Setup]
-AppId={{EE0EB66F-1FF9-4E15-9C1F-E6C5652F2A56}
+AppId={#DeviceAppId}
 AppName={#RacalDana1991Name}
 AppVersion={#RacalDana1991Version}
 AppVerName={#RacalDana1991Name} {#RacalDana1991Version}
@@ -25,13 +38,17 @@ DefaultDirName={pf}\{#RacalDana1991Name}
 DefaultGroupName={#RacalDana1991Name}
 AllowNoIcons=yes
 PrivilegesRequired=admin
+#if BuildArch == "x64"
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+#else
+ArchitecturesAllowed=x86 x64
+#endif
 ; Inno 5.3.5 can see modern Windows as 6.2 due to its legacy manifest.
 SetupIconFile=assets\{#RacalDana1991Icon}
 UninstallDisplayIcon={app}\{#RacalDana1991Exe}
 OutputDir=installer
-OutputBaseFilename=RacalDana1991-Setup-{#RacalDana1991Version}-x64
+OutputBaseFilename=RacalDana1991-Setup-{#RacalDana1991Version}-{#BuildArch}
 Compression=lzma
 SolidCompression=yes
 
@@ -44,15 +61,19 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
 
 [Files]
-Source: "build\{#RacalDana1991Exe}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build\generic\*.dll"; DestDir: "{app}\generic"; Flags: ignoreversion
-Source: "build\iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion
-Source: "build\imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversion
-Source: "build\networkinformation\*.dll"; DestDir: "{app}\networkinformation"; Flags: ignoreversion
-Source: "build\platforms\*.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
-Source: "build\styles\*.dll"; DestDir: "{app}\styles"; Flags: ignoreversion
-Source: "build\tls\*.dll"; DestDir: "{app}\tls"; Flags: ignoreversion
+#if BuildArch == "x86"
+Source: "{#DeviceBuildDir}\qt.conf"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#DeviceBuildDir}\bearer\*.dll"; DestDir: "{app}\bearer"; Flags: ignoreversion skipifsourcedoesntexist
+#endif
+Source: "{#DeviceBuildDir}\{#RacalDana1991Exe}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#DeviceBuildDir}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#DeviceBuildDir}\generic\*.dll"; DestDir: "{app}\generic"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#DeviceBuildDir}\iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#DeviceBuildDir}\imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#DeviceBuildDir}\networkinformation\*.dll"; DestDir: "{app}\networkinformation"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#DeviceBuildDir}\platforms\*.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "{#DeviceBuildDir}\styles\*.dll"; DestDir: "{app}\styles"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#DeviceBuildDir}\tls\*.dll"; DestDir: "{app}\tls"; Flags: ignoreversion skipifsourcedoesntexist
 Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "THIRD-PARTY-NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "licenses\*.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion

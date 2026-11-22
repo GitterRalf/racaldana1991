@@ -10,7 +10,7 @@ Windows-Anwendung zur GPIB-Steuerung der Frequenzzähler Racal-Dana 1991 und 199
 
 ## Installation unter Windows
 
-Das Windows-x64-Setup im [aktuellen GitHub-Release](https://github.com/GitterRalf/racaldana1991/releases/latest) enthält die benötigten Qt-, Qwt- und MinGW-DLLs. Der Standardordner ist `C:\Programme\Racal-Dana 1991 Control`. Für den Download ist ein GitHub-Konto mit Zugriff auf das private Repository erforderlich. Den 64-Bit-Treiber NI-488.2 für GPIB separat installieren.
+Die Windows-Setups für x86 und x64 im [aktuellen GitHub-Release](https://github.com/GitterRalf/racaldana1991/releases/latest) enthalten die benötigten Qt-, Qwt- und MinGW-DLLs. Der Standardordner für x64 ist `C:\Programme\Racal-Dana 1991 Control`. Für den Download ist ein GitHub-Konto mit Zugriff auf das private Repository erforderlich. Den NI-488.2-Treiber mit Unterstützung für die Programmarchitektur für GPIB separat installieren.
 
 ## Bedienung
 
@@ -22,13 +22,30 @@ Das Windows-x64-Setup im [aktuellen GitHub-Release](https://github.com/GitterRal
 
 ## Bauen
 
-Benötigt werden ein 64-Bit-Windows-Kit mit Qt 6 einschließlich Widgets, Concurrent, Network und Linguist Tools, CMake ab 3.24, Ninja und [Qwt 6.3](https://qwt.sourceforge.io/qwtinstall.html) für dasselbe Qt-Kit. Die lokale Qwt-Installation mit Headern, Importbibliothek und DLL wird unter `.deps/qwt` erwartet. Bei direkter CMake-Konfiguration lässt sich der Pfad mit `-DQWT_ROOT=…` angeben.
+Benötigt werden ein Windows-Kit mit Qt 6 für x64 oder Qt 5.15 für x86 einschließlich Widgets, Concurrent, Network und Linguist Tools, CMake ab 3.24, Ninja und [Qwt 6.3](https://qwt.sourceforge.io/qwtinstall.html) für dasselbe Qt-Kit. Die lokale Qwt-Installation mit Headern, Importbibliothek und DLL wird unter `.deps/qwt` für x64 und `.deps/qwt-qt5-x86` für x86 erwartet. Bei direkter CMake-Konfiguration lässt sich der Pfad mit `-DQWT_ROOT=…` angeben.
 
 ~~~powershell
-.\build.ps1
+.\build.ps1                    # x64
+.\build.ps1 -Architecture x86  # x86
 ~~~
 
 Das Skript baut `build\RacalDana1991.exe` und stellt die Laufzeit-DLLs bereit. Danach `RacalDana1991.iss` mit Inno Setup kompilieren. Das Skript übernimmt die Version aus `CMakeLists.txt` und das Icon aus `assets/app.rc`. Die Setupdatei landet im Ordner `installer`.
+
+
+### Windows-Architekturen
+
+Die x86-Ausgabe verwendet Qt 5.15.19 mit MinGW 8.1 und hat einen eigenen
+Installationsordner **Racal-Dana 1991 Control (32 Bit)**. Auf 64-Bit-Windows können beide
+Ausgaben parallel installiert werden. Die x64-Ausgabe verwendet weiterhin
+Qt 6 und ist beim Build der Standard.
+
+Der Build für x86 nutzt `build-x86`, der Build für x64 den Ordner `build`.
+Die Installer entstehen im Projektordner mit folgenden Aufrufen.
+
+```powershell
+ISCC.exe RacalDana1991.iss
+ISCC.exe /DBuildArch=x86 RacalDana1991.iss
+```
 
 ## Lizenz
 

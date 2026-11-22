@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+#include <string_view>
+
 #include <QAction>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -136,7 +138,7 @@ QWidget *MainWindow::createMeasurementTab()
     layout->addWidget(createFrequencyPlot(), 1);
     layout->addStretch(0);
 
-    connect(mode, &QComboBox::currentIndexChanged, this, [this] {
+    connect(mode, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
         clearReading();
         updateFrequencyPlot();
         updateControls();
@@ -184,12 +186,12 @@ QWidget *MainWindow::createInputTab()
         input.level->setSuffix(QStringLiteral(" V"));
         input.level->setSingleStep(range > 5.1 ? 0.2 : 0.02);
         input.level->setEnabled(code(input.trigger) == "MN");
-        connect(input.attenuation, &QComboBox::currentIndexChanged, this, [level = input.level, atten = input.attenuation] {
+        connect(input.attenuation, qOverload<int>(&QComboBox::currentIndexChanged), this, [level = input.level, atten = input.attenuation] {
             const double range = code(atten) == "AE" ? 51.0 : 5.1;
             level->setRange(-range, range);
             level->setSingleStep(range > 5.1 ? 0.2 : 0.02);
         });
-        connect(input.trigger, &QComboBox::currentIndexChanged, this, [level = input.level, trigger = input.trigger] {
+        connect(input.trigger, qOverload<int>(&QComboBox::currentIndexChanged), this, [level = input.level, trigger = input.trigger] {
             level->setEnabled(code(trigger) == "MN");
         });
         channels->addWidget(group, 1);
@@ -249,9 +251,9 @@ QWidget *MainWindow::createAdvancedTab()
     layout->addWidget(processing, 1);
     layout->setAlignment(Qt::AlignTop);
 
-    connect(selfTest, &QComboBox::currentIndexChanged, this, [this] { updateControls(); });
-    connect(delayMode, &QComboBox::currentIndexChanged, this, [this] { updateControls(); });
-    connect(mathMode, &QComboBox::currentIndexChanged, this, [this] { updateControls(); });
+    connect(selfTest, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] { updateControls(); });
+    connect(delayMode, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] { updateControls(); });
+    connect(mathMode, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] { updateControls(); });
     return tab;
 }
 
@@ -290,8 +292,8 @@ void MainWindow::restoreChoice(QComboBox *combo, const QString &key, int default
 MeasurementSetup MainWindow::measurementSetup() const
 {
     const Mode &selected = modes[mode->currentIndex()];
-    const bool checkMode = QByteArrayView(selected.code) == "CK";
-    const bool enableMath = !checkMode && QByteArrayView(selected.code) != "PH" && code(mathMode) == "ME";
+    const bool checkMode = std::string_view(selected.code) == "CK";
+    const bool enableMath = !checkMode && std::string_view(selected.code) != "PH" && code(mathMode) == "ME";
     const QByteArray test = checkMode ? code(selfTest) : QByteArray("S70");
     const bool special = selected.swapped || selected.manual || arming->currentIndex() != 0
         || autoTrigger->currentIndex() != 0 || peakLevel->currentIndex() != 0 || checkMode;
@@ -338,7 +340,7 @@ MeasurementSetup MainWindow::measurementSetup() const
 
 bool MainWindow::isFrequencyMode() const
 {
-    const QByteArrayView function(modes[mode->currentIndex()].code);
+    const std::string_view function(modes[mode->currentIndex()].code);
     return function == "FA" || function == "FC";
 }
 
@@ -412,10 +414,10 @@ void MainWindow::updateControls()
     measurementForm->setEnabled(editable);
     inputTab->setEnabled(editable);
     advancedTab->setEnabled(editable);
-    const bool checkMode = QByteArrayView(selected.code) == "CK";
+    const bool checkMode = std::string_view(selected.code) == "CK";
     const bool diagnostic = checkMode && selfTest->currentIndex() != 0;
     selfTest->setEnabled(checkMode);
-    mathMode->setEnabled(QByteArrayView(selected.code) != "PH" && QByteArrayView(selected.code) != "CK");
+    mathMode->setEnabled(std::string_view(selected.code) != "PH" && std::string_view(selected.code) != "CK");
     mathX->setEnabled(mathMode->isEnabled() && code(mathMode) == "ME");
     mathZ->setEnabled(mathX->isEnabled());
     delay->setEnabled(code(delayMode) == "DE");

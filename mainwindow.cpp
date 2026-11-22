@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+#include <string_view>
+
 #include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
@@ -162,7 +164,7 @@ void MainWindow::createMenus()
     clearFrequencyAction = file->addAction(tr("Frequenzverlauf leeren"), this, &MainWindow::clearFrequencyHistory);
     clearFrequencyAction->setObjectName(QStringLiteral("clearFrequencyHistory"));
     file->addSeparator();
-    file->addAction(tr("&Beenden"), QKeySequence::Quit, this, &QWidget::close);
+    file->addAction(tr("&Beenden"), this, &QWidget::close, QKeySequence::Quit);
 
     auto *settings = bar->addMenu(tr("&Einstellungen"));
     connectionSettings = settings->addAction(tr("Verbindung …"), this, &MainWindow::editConnection);
@@ -179,7 +181,7 @@ void MainWindow::createMenus()
         connect(action, &QAction::triggered, this, [this, dark] { setDarkTheme(dark); });
     }
     settings->addSeparator();
-    settings->addAction(tr("Einstellungen speichern"), QKeySequence::Save, this, &MainWindow::saveSettings)
+    settings->addAction(tr("Einstellungen speichern"), this, &MainWindow::saveSettings, QKeySequence::Save)
         ->setObjectName(QStringLiteral("saveSettings"));
 
     auto *instrument = bar->addMenu(tr("&Gerät"));
@@ -463,7 +465,7 @@ void MainWindow::recall(const QString &label, const char *command, const char *c
 {
     recallLabel = label;
     recallUnit = unit;
-    recallRegister = QByteArrayView(command) == "RSF";
+    recallRegister = std::string_view(command) == "RSF";
     Request request(Operation::Recall);
     request.recallCommand = command;
     request.recallCode = code;

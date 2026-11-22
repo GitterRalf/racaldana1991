@@ -162,7 +162,7 @@ void MainWindow::updateFrequencyPlot()
     QVector<QPointF> samples;
     samples.reserve(static_cast<qsizetype>(frequencyHistory.size()));
     for (const auto &point : frequencyHistory) {
-        samples.emplaceBack(point.x(), point.y() / divisor);
+        samples.append(QPointF(point.x(), point.y() / divisor));
     }
     frequencyCurve->setSamples(samples);
     frequencyPlot->setAxisTitle(QwtAxis::YLeft, tr("Frequenz [%1]").arg(unit));
